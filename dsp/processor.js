@@ -62,6 +62,7 @@ function makeVoice(m, spec){
   if (spec.type === 'pluck') return new StringVoice(o);
   if (spec.type === 'piano') return new PianoVoice(o);
   if (spec.type === 'modal') return new ModalVoice(o);
+  if (spec.type === 'kit') return new KitVoice(o);
   if (spec.type === 'flute') return new FluteVoice(o);
   if (spec.type === 'reed') return new ReedVoice(o);
   if (spec.type === 'brass') return new BrassVoice(o);
