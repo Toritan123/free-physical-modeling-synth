@@ -1,18 +1,36 @@
 
 /* ---------- 楽器定義 ---------- */
 const SPECS = {
-  guitar:  { type:'pluck', pickPos:0.16, t110:7, tExp:0.55, R:4.5, fcMin:900, fcMax:7000,
-             polDetune:0.0005, polDecay:0.6, polAmp:0.45, pickNoise:0.03, thump:0.25, release:0.10,
-             body:{ dry:0.6, modes:[[100,9,1.3],[196,12,1.5],[390,9,0.8],[560,7,0.5],[1100,3,0.4]] }, gain:0.32 },
-  koto:    { type:'pluck', pickPos:0.07, t110:5, tExp:0.5, R:3, fcMin:2500, fcMax:11000,
+  // ギターはアイオワ大学 MIS のナイロン弦ギター（pp/mf/ff、E2〜B5）の録音に合わせた：
+  // 基音の余韻（高い音ほど急に短い）、絶対周波数で増える高域の減衰、非調和性、第2・第3倍音の弱さ、
+  // 最低音の基音の弱さ（胴が80Hz付近をあまり放射しない）、強く弾いた直後のわずかな音程の上ずり
+  guitar:  { type:'pluck', pickPos:0.15, pickExp:0.3, pickJit:0.12, pick2:[1.35, 0.5], t110:6.5, tExp:0.95, tMin:0.25,
+             hf:[14, -0.75], bRef:0.6, B:[1.2e-4, 0.8], soft:[1.4, 60, 0.95, 2, 0.35], sharp:0.15, sharpExp:0.8, sharpDecay:300, fcMin:2500, fcMax:7000,
+             polDetune:0.0005, polDecay:0.6, polAmp:0.45, pickNoise:0.03, thump:0.25, release:0.10, glide:[5, 0.1], hp:[90, 0.7],
+             body:{ dry:0.6, modes:[[100,5,1.0],[196,5,1.0],[390,4,0.6],[560,4,0.4],[1100,3,0.4]] }, gain:0.38 },
+  // 琴は Freesound の生の琴の即興演奏（CC0）から切り出した単音に合わせた：余韻が長く高域の減衰が緩い、
+  // 倍音は第2倍音から10〜20dB下がる（以前は高い倍音が強すぎて電子音的だった）、弾いた直後の音程の上ずり。
+  // 録音は指で弾いた音も混ざるため、爪（琴爪）の明るさを残して高い倍音は録音より 5〜10dB 強めにしてある
+  koto:    { type:'pluck', pickPos:0.07, pickExp:0.3, pickJit:0.15, pick2:[1.5, 0.4], t110:10, tExp:0.6,
+             hf:[5, -0.3], bRef:0.75, B:[1e-4, 0.5], soft:[1.5, 100, 0.95, 2, 0.2], sharp:0.08, sharpExp:0.5, sharpDecay:300,
+             fcMin:2500, fcMax:11000, glide:[6, 0.06], hp:[150, 0.7],
              polDetune:0.0007, polDecay:0.5, polAmp:0.5, pickNoise:0.05, thump:0.15, release:0.25,
-             body:{ dry:0.7, modes:[[150,6,0.9],[290,8,1.0],[520,6,0.7],[900,4,0.4]] }, gain:0.32 },
-  harp:    { type:'pluck', pickPos:0.42, t110:10, tExp:0.6, R:6, fcMin:600, fcMax:4500,
+             body:{ dry:0.7, modes:[[150,4,0.8],[290,4,0.8],[520,4,0.6],[900,3,0.4]] }, gain:0.265 },
+  // ハープは VSCO-2-CE のコンサートハープ（E1〜F7 の mf）の録音に合わせた：弦の中央を弾くので奇数倍音が強い、
+  // 低音弦の基音の弱さ（響板が低い周波数を放射しにくい）、高音ほど短い余韻、絶対周波数で増える高域の減衰、高音弦の大きな非調和性
+  harp:    { type:'pluck', pickPos:0.48, pickJit:0.04, pick2:[0.92, 0.2], t110:11.3, tExp:0.95,
+             hf:[14, -0.5], bRef:0.45, B:[1.5e-4, 1.1], sharp:0.04, sharpExp:0.3, sharpDecay:300,
+             fcMin:1500, fcMax:4500, hp:[130, 0.7],
              polDetune:0.0004, polDecay:0.7, polAmp:0.4, pickNoise:0.01, thump:0.08, release:0.5,
-             body:{ dry:0.7, modes:[[140,6,0.9],[260,7,0.8],[470,6,0.5]] }, gain:0.31, spread:1 },
-  shamisen:{ type:'pluck', pickPos:0.09, t110:3.6, tExp:0.35, R:1.8, fcMin:3500, fcMax:12000,
+             body:{ dry:0.7, modes:[[140,4,0.8],[260,4,0.7],[470,4,0.5]] }, gain:0.41, spread:1 },
+  // 三味線は Freesound の生の三味線の即興演奏（CC0）から切り出した単音に合わせた：基音がとても弱い
+  // （小さな皮張りの胴は 400Hz 以下をほとんど放射しない）、中域の倍音は長く残り高域は速く消える、
+  // 撥で弾いた直後に音程が 15〜30 セント上ずる
+  shamisen:{ type:'pluck', pickPos:0.09, pickJit:0.1, pick2:[1.4, 0.4], t110:8, tExp:0.4,
+             hf:[6, -0.5], bRef:0.75, B:[5e-5, 0.5], sawari:[0.35, 0.6], sharp:0.06, sharpExp:0.5, sharpDecay:300,
+             fcMin:3500, fcMax:12000, glide:[20, 0.03], hp:[540, 0.8, 2],
              polDetune:0.0012, polDecay:0.5, polAmp:0.6, pickNoise:0.08, thump:0.6, release:0.12,
-             body:{ dry:0.55, modes:[[310,5,1.6],[640,6,1.3],[1150,5,1.0],[2100,4,0.6]] }, gain:0.218 },
+             body:{ dry:0.55, modes:[[310,4,1.4],[640,4,1.1],[1150,3,0.9],[2100,3,0.6]] }, gain:0.54 },
   // 響板の放射（180Hz以下を弱める）と音域ごとの整音表 [鍵番号, ハンマー剛性の log10 倍率, フェルト平滑化 ms] は、
   // Steinway B の録音（アイオワ大学 MIS、C2〜C7 の mf）の部分音スペクトルに合わせて決めた
   piano:   { type:'piano', spread:1, radHz:100, tpMul:0.75, afterRatio:5, egAsym:0.14,
