@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>物理モデル音源シンセ — Physical Modeling Synth</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header>
+  <h1>🎛 <span class="grad">物理モデル音源シンセ</span></h1>
+  <p>楽器の物理シミュレーション（弦・気柱・振動体）で波形をリアルタイム生成 — サンプル音源は一切不使用</p>
+</header>
+
+<div class="wrap">
+  <div class="panel">
+    <div class="insts" id="insts"></div>
+    <div id="modelDesc"></div>
+
+    <div class="controls">
+      <div class="ctl">
+        <label>明るさ / 弓圧 <output id="brightOut">0.70</output></label>
+        <input type="range" id="bright" min="0" max="1" step="0.01" value="0.7">
+      </div>
+      <div class="ctl">
+        <label>減衰・余韻 <output id="decayOut">0.50</output></label>
+        <input type="range" id="decay" min="0" max="1" step="0.01" value="0.5">
+      </div>
+      <div class="ctl">
+        <label>残響（リバーブ） <output id="revOut">0.25</output></label>
+        <input type="range" id="rev" min="0" max="1" step="0.01" value="0.25">
+      </div>
+      <div class="ctl">
+        <label><input type="checkbox" id="spatial" checked> 立体音響 <span style="opacity:.7">（ヘッドホン向け）</span></label>
+        <div style="font-size:11px;opacity:.7;line-height:1.4">ピアノを目の前約1.2mに置き、部屋の響きをつける</div>
+      </div>
+      <div class="ctl">
+        <label>音量 <output id="volOut">0.50</output></label>
+        <input type="range" id="vol" min="0" max="1" step="0.01" value="0.5">
+      </div>
+    </div>
+
+    <div class="ptune" id="ptune">
+      <div class="ptune-head"><b>ピアノの調整</b> <span>耳で聴いて、本物に近づく方向へ動かしてください（新しく弾いた音から反映）</span>
+        <button class="mbtn" id="ptReset">既定に戻す</button></div>
+      <div class="controls" id="ptSliders"></div>
+    </div>
+
+    <canvas id="scope"></canvas>
+
+    <div class="kbbar">
+      <div class="octctl">
+        <button id="octDown" title="オクターブ下 (Z)">◀</button>
+        <span id="octLabel">C4 〜 C6</span>
+        <button id="octUp" title="オクターブ上 (X)">▶</button>
+        <button id="pedal" title="サステインペダル (Space)">ペダル</button>
+      </div>
+      <div id="voicesTag">発音数: <b id="voiceN">0</b> ／ 負荷: <b id="loadN">0%</b></div>
+      <div class="hint">PCキー A W S E D F T G Y H U J K O L P ; で演奏 ／ Z X でオクターブ ／ Space でサステインペダル ／ 鍵盤の下を押すほど強い音</div>
+    </div>
+    <div id="kb"></div>
+
+    <div class="midi" id="midiBox">
+      <div class="midibar">
+        <label class="mbtn" for="midiFile">📂 MIDIファイルを開く</label>
+        <input type="file" id="midiFile" accept=".mid,.midi,.kar,.rmi" hidden>
+        <button class="mbtn" id="midiPlay" disabled>▶ 再生</button>
+        <button class="mbtn" id="midiStop" disabled>■ 停止</button>
+        <span class="mname" id="midiName">ファイル未選択 — ページにドラッグ＆ドロップでも開けます（GM 対応）</span>
+        <span class="mtime" id="midiTime"></span>
+      </div>
+      <div class="mprog"><div id="midiBar"></div></div>
+      <table class="mch" id="midiCh"></table>
+    </div>
+  </div>
+</div>
+
+<footer>
+  実装モデル：パルス波励振の2偏波弦導波管＋胴共鳴（ギター・琴・ハープ・三味線）／ 非調和性つき打弦導波管＋同音弦の結合＋響板（ピアノ）／
+  モード合成（エレピ・マリンバ・ビブラフォン・グロッケン・オルゴール・鐘・ドラム）／ ジェット駆動の気柱（フルート）／ リード駆動の閉管（クラリネット）／
+  唇の共振弁と管（トランペット）／ 弓・弦の摩擦と胴共鳴（バイオリン・チェロ）。すべて AudioWorklet 内で1サンプルずつ計算しています。<br>
+  MIDI ファイル（GM）はサンプル単位の予約再生で、128音色とドラムセットを上記の物理モデルに割り当てて鳴らします（ピッチベンドは未対応）。
+</footer>
+
+<!-- 音源（AudioWorklet 内で動く DSP）は dsp/ の各ファイルをつなげて読み込む（js/ui.js の DSP_FILES） -->
+<script src="js/ui.js"></script>
+<script src="js/midi-core.js"></script>
+<script src="js/midi-player.js"></script>
+</body>
+</html>

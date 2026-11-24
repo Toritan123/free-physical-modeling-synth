@@ -1,0 +1,71 @@
+# physical-modeling-synth
+
+ブラウザだけで動く、**物理モデル音源**の楽器集です。サンプル（録音した音）は一切使わず、弦・ハンマー・管・弓などの振る舞いを AudioWorklet の中で1サンプルずつ計算して、リアルタイムに波形を作ります。
+
+Anthropic の AI「Claude」と対話しながら、[Claude Code](https://claude.com/claude-code) で設計・実装・録音との比較による較正を行いました。Anthropic の公式プロジェクトではありません。
+
+**デモ:** https://toritan123.github.io/physical-modeling-synth/
+
+> Real-time physical-modeling instruments that run entirely in the browser (Web Audio AudioWorklet): piano, plucked and bowed strings, winds, mallets and drums, plus General MIDI file playback. No samples are used. Built in conversation with Claude using Claude Code; not an official Anthropic project.
+
+## 遊び方
+
+- 画面の鍵盤をクリック、または PC のキーボード（A W S E D F T G …）で演奏します。
+- 楽器を選び、「明るさ」「減衰・余韻」「残響」で音色を変えられます。
+- **立体音響**（ヘッドホン向け）：ピアノを目の前約1.2mに置いたように聞こえます（頭部伝達関数 HRTF と部屋の響きの畳み込み）。
+- **MIDI ファイル**（.mid / .rmi）をドラッグ＆ドロップすると、General MIDI の128音色とドラムセットを物理モデルに割り当てて再生します。
+- ピアノを選ぶと「ピアノの調整」パネルが出て、打撃音・弦の硬さ・同音弦のうなりなどを耳で合わせられます。
+
+## ローカルで動かす
+
+音源のコードを `fetch` で読み込むため、`file://` で直接開くと動きません。HTTP サーバーから開いてください。
+
+```bash
+python3 -m http.server 8931
+```
+
+ブラウザで http://localhost:8931/ を開きます。
+
+## 楽器と物理モデル
+
+| 楽器 | モデル | ファイル |
+|---|---|---|
+| ピアノ | ハンマーと弦の衝突シミュレーション（2層フェルト）、非調和性をもつ弦の導波管、同音弦の結合（二段減衰）、響板・フレームの共鳴、共鳴弦、縦振動、ストレッチ調律 | `dsp/piano.js` |
+| ギター・琴・ハープ・三味線 | パルス波励振の2偏波弦導波管＋胴の共鳴 | `dsp/pluck.js` |
+| エレピ・マリンバ・ビブラフォン・グロッケン・オルゴール・鐘・ドラム | モード合成（減衰共振器バンク） | `dsp/modal.js` |
+| フルート・クラリネット・トランペット | ジェット駆動の気柱／リード弁と閉管／唇の共振弁と管 | `dsp/winds.js` |
+| バイオリン・チェロ | 弓と弦の摩擦モデル＋胴の共鳴 | `dsp/bowed.js` |
+
+楽器ごとのパラメータ（GM 音色の割り当て用を含む）は `dsp/specs.js` にあります。
+
+### ピアノの較正について
+
+ピアノは、次の録音と数値で比べながら合わせ込みました。録音そのものはこのリポジトリに含まれていません（解析にだけ使用）。
+
+- University of Iowa Electronic Music Studios, *Musical Instrument Samples*（Steinway B）
+- *Salamander Grand Piano*（Yamaha C5、Alexander Holm 作、CC BY 3.0）
+
+比べたのは、倍音ごとのレベルと減衰の速さ、非調和性、打鍵の強さによる音量と音色の変化、立ち上がり、音域ごとの音量バランスなどです。
+
+## ファイル構成
+
+```
+index.html          画面
+css/style.css       見た目
+js/ui.js            画面・鍵盤・音声の経路（立体音響を含む）
+js/midi-core.js     MIDI ファイルの解析と GM 音色の割り当て
+js/midi-player.js   MIDI の予約再生
+dsp/                AudioWorklet 内で動く音源（この順につなげて1つのモジュールとして読み込む）
+  core.js           共通部品（遅延線・フィルタ・共振器・ループ損失の設計）
+  pluck.js          撥弦
+  piano.js          ピアノ
+  modal.js          モード合成
+  winds.js          管楽器
+  bowed.js          擦弦
+  specs.js          楽器定義
+  processor.js      発音管理・残響・ミキサー（AudioWorkletProcessor）
+```
+
+## ライセンス
+
+[MIT](LICENSE)
