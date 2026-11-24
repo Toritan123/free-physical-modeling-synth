@@ -10,7 +10,7 @@ const INSTS = [
   { id:'glocken', name:'グロッケン',   em:'⭐', model:'鋼鉄の一様棒の曲げモード (1 : 2.76 : 5.40 …)',              bright:.75, decay:.50 },
   { id:'musicbox',name:'オルゴール',   em:'🎠', model:'片持ち梁（櫛歯）のモード 1 : 6.3 : 17.6',                   bright:.75, decay:.50 },
   { id:'bell',    name:'鐘',           em:'🔔', model:'鐘の部分音＋非対称性による縮退モード対のうなり',            bright:.50, decay:.55 },
-  { id:'drum',    name:'ドラム',       em:'🥁', model:'円形膜のベッセルモード＋張力変調によるピッチ降下',          bright:.50, decay:.50 },
+  { id:'drum',    name:'ドラム',       em:'🥁', model:'円形膜のモード＋張力変調によるピッチの上ずり＋スティックの打撃音',          bright:.50, decay:.50 },
   { id:'flute',   name:'フルート',     em:'🪈', model:'気柱導波管＋ジェット非線形＋息の雑音（押している間持続）',  bright:.50, decay:.50 },
   { id:'clarinet',name:'クラリネット', em:'🎷', model:'リード弁の非線形＋閉管導波管（奇数倍音が主体）',            bright:.50, decay:.50 },
   { id:'trumpet', name:'トランペット', em:'🎺', model:'唇の共振弁＋管の導波管（強く吹くほど倍音が増える）',        bright:.50, decay:.50 },
@@ -71,7 +71,7 @@ function showAudioError(msg){
   b.textContent = msg;
 }
 // AudioWorklet 内で動く音源コード（この順につなげる）
-const DSP_FILES = ['dsp/core.js', 'dsp/pluck.js', 'dsp/piano.js', 'dsp/modal.js', 'dsp/winds.js', 'dsp/bowed.js', 'dsp/specs.js', 'dsp/processor.js'];
+const DSP_FILES = ['dsp/core.js', 'dsp/pluck.js', 'dsp/piano.js', 'dsp/modal.js', 'dsp/drums.js', 'dsp/winds.js', 'dsp/bowed.js', 'dsp/specs.js', 'dsp/processor.js'];
 const VOL_SCALE = 2.3;
 function initAudio(){
   ctx = new (window.AudioContext || window.webkitAudioContext)();
