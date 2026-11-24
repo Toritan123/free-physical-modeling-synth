@@ -1,12 +1,18 @@
-# physical-modeling-synth
+# Free Physical Modeling Synth
 
-ブラウザだけで動く、**物理モデル音源**の楽器集です。サンプル（録音した音）は一切使わず、弦・ハンマー・管・弓などの振る舞いを AudioWorklet の中で1サンプルずつ計算して、リアルタイムに波形を作ります。
+ブラウザだけで動く、**無料の物理モデル音源**の楽器集です。インストール不要・登録不要で、誰でも自由に使えます（MIT ライセンス）。サンプル（録音した音）は一切使わず、弦・ハンマー・管・弓などの振る舞いを AudioWorklet の中で1サンプルずつ計算して、リアルタイムに波形を作ります。
 
-Anthropic の AI「Claude」と対話しながら、[Claude Code](https://claude.com/claude-code) で設計・実装・録音との比較による較正を行いました。Anthropic の公式プロジェクトではありません。
+**デモ:** https://toritan123.github.io/free-physical-modeling-synth/
 
-**デモ:** https://toritan123.github.io/physical-modeling-synth/
+## 作り方：AI が書き、人が耳で聴いて直す
 
-> Real-time physical-modeling instruments that run entirely in the browser (Web Audio AudioWorklet): piano, plucked and bowed strings, winds, mallets and drums, plus General MIDI file playback. No samples are used. Built in conversation with Claude using Claude Code; not an official Anthropic project.
+コードは Anthropic の AI「Claude」が [Claude Code](https://claude.com/claude-code) で書きました。ただし、AI に任せきりではありません。作者が実際に何度も弾いて耳で聴き、そのたびに「立ち上がりがギターっぽい」「低音が電子的」「全体に少し調律が狂って聞こえる」「G3 あたりがまだ偽物っぽい」といった感想を伝えて、直してもらっています。
+
+Claude はその感想を手がかりに、本物のピアノの録音と倍音・減衰・調律などを数値で比べて原因を探し、直しました。聴いて、比べて、直す。これを何十回も繰り返して今の音になっています。
+
+Anthropic の公式プロジェクトではありません。
+
+> **Free** real-time physical-modeling instruments that run entirely in the browser (Web Audio AudioWorklet): piano, plucked and bowed strings, winds, mallets and drums, plus General MIDI file playback. No samples are used. The code was written by Claude (Anthropic's AI) using Claude Code, but it was not left to the AI alone: the author played and listened to it by ear many times, and every round of feedback ("the attack sounds like a guitar", "the bass sounds electronic", "it sounds slightly out of tune") was traced against real piano recordings and fixed. Not an official Anthropic project.
 
 ## 遊び方
 
